@@ -11,6 +11,12 @@ from utils.utils import build_targets, to_cpu, non_max_suppression
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import adder ###########
+
+def conv2d(in_channels, out_channels, kernel_size, stride, padding, bias):
+    """3x3 or 1x1 convolution with padding"""
+    return adder.adder2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride,
+                     padding=padding, bias=bias)
 
 
 def create_modules(module_defs):
@@ -30,7 +36,8 @@ def create_modules(module_defs):
             pad = (kernel_size - 1) // 2
             modules.add_module(
                 f"conv_{module_i}",
-                nn.Conv2d(
+                # nn.Conv2d( #####################
+                    conv2d(
                     in_channels=output_filters[-1],
                     out_channels=filters,
                     kernel_size=kernel_size,

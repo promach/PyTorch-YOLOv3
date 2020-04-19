@@ -25,12 +25,12 @@ import torch.optim as optim
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--epochs", type=int, default=100, help="number of epochs")
-    parser.add_argument("--batch_size", type=int, default=8, help="size of each image batch")
+    parser.add_argument("--batch_size", type=int, default=2, help="size of each image batch")
     parser.add_argument("--gradient_accumulations", type=int, default=2, help="number of gradient accums before step")
     parser.add_argument("--model_def", type=str, default="config/yolov3.cfg", help="path to model definition file")
     parser.add_argument("--data_config", type=str, default="config/coco.data", help="path to data config file")
     parser.add_argument("--pretrained_weights", type=str, help="if specified starts from checkpoint model")
-    parser.add_argument("--n_cpu", type=int, default=8, help="number of cpu threads to use during batch generation")
+    parser.add_argument("--n_cpu", type=int, default=0, help="number of cpu threads to use during batch generation")
     parser.add_argument("--img_size", type=int, default=416, help="size of each image dimension")
     parser.add_argument("--checkpoint_interval", type=int, default=1, help="interval between saving model weights")
     parser.add_argument("--evaluation_interval", type=int, default=1, help="interval evaluations on validation set")
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     opt = parser.parse_args()
     print(opt)
 
-    logger = Logger("logs")
+    ## logger = Logger("logs")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -57,11 +57,11 @@ if __name__ == "__main__":
     model.apply(weights_init_normal)
 
     # If specified we start from checkpoint
-    if opt.pretrained_weights:
-        if opt.pretrained_weights.endswith(".pth"):
-            model.load_state_dict(torch.load(opt.pretrained_weights))
-        else:
-            model.load_darknet_weights(opt.pretrained_weights)
+#    if opt.pretrained_weights:
+#        if opt.pretrained_weights.endswith(".pth"):
+#            model.load_state_dict(torch.load(opt.pretrained_weights))
+#        else:
+#            model.load_darknet_weights(opt.pretrained_weights)
 
     # Get dataloader
     dataset = ListDataset(train_path, augment=True, multiscale=opt.multiscale_training)
@@ -133,7 +133,7 @@ if __name__ == "__main__":
                         if name != "grid_size":
                             tensorboard_log += [(f"{name}_{j+1}", metric)]
                 tensorboard_log += [("loss", loss.item())]
-                logger.list_of_scalars_summary(tensorboard_log, batches_done)
+                ## logger.list_of_scalars_summary(tensorboard_log, batches_done)
 
             log_str += AsciiTable(metric_table).table
             log_str += f"\nTotal loss {loss.item()}"
@@ -157,7 +157,7 @@ if __name__ == "__main__":
                 conf_thres=0.5,
                 nms_thres=0.5,
                 img_size=opt.img_size,
-                batch_size=8,
+                batch_size=2,
             )
             evaluation_metrics = [
                 ("val_precision", precision.mean()),
@@ -165,7 +165,7 @@ if __name__ == "__main__":
                 ("val_mAP", AP.mean()),
                 ("val_f1", f1.mean()),
             ]
-            logger.list_of_scalars_summary(evaluation_metrics, epoch)
+            ## logger.list_of_scalars_summary(evaluation_metrics, epoch)
 
             # Print class APs and mAP
             ap_table = [["Index", "Class name", "AP"]]
@@ -176,3 +176,4 @@ if __name__ == "__main__":
 
         if epoch % opt.checkpoint_interval == 0:
             torch.save(model.state_dict(), f"checkpoints/yolov3_ckpt_%d.pth" % epoch)
+
