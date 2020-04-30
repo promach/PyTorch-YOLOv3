@@ -8,7 +8,7 @@ echo "
 #batch=1
 #subdivisions=1
 # Training
-batch=2
+batch=8
 subdivisions=2
 width=416
 height=416

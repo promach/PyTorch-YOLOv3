@@ -22,10 +22,16 @@ from torchvision import transforms
 from torch.autograd import Variable
 import torch.optim as optim
 
+import apex
+from apex import amp
+
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--epochs", type=int, default=100, help="number of epochs")
-    parser.add_argument("--batch_size", type=int, default=2, help="size of each image batch")
+    parser.add_argument("--batch_size", type=int, default=8, help="size of each image batch")
     parser.add_argument("--gradient_accumulations", type=int, default=2, help="number of gradient accums before step")
     parser.add_argument("--model_def", type=str, default="config/yolov3.cfg", help="path to model definition file")
     parser.add_argument("--data_config", type=str, default="config/coco.data", help="path to data config file")
@@ -75,6 +81,7 @@ if __name__ == "__main__":
     )
 
     optimizer = torch.optim.Adam(model.parameters())
+    model, optimizer = amp.initialize(model, optimizer, opt_level="O1")
 
     metrics = [
         "grid_size",
@@ -103,7 +110,9 @@ if __name__ == "__main__":
             targets = Variable(targets.to(device), requires_grad=False)
 
             loss, outputs = model(imgs, targets)
-            loss.backward()
+
+            with amp.scale_loss(loss, optimizer) as scaled_loss:
+                scaled_loss.backward()
 
             if batches_done % opt.gradient_accumulations:
                 # Accumulates gradient before each step
@@ -157,7 +166,7 @@ if __name__ == "__main__":
                 conf_thres=0.5,
                 nms_thres=0.5,
                 img_size=opt.img_size,
-                batch_size=2,
+                batch_size=8,
             )
             evaluation_metrics = [
                 ("val_precision", precision.mean()),
