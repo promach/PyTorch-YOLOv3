@@ -206,10 +206,10 @@ def bbox_iou(box1, box2, x1y1x2y2=True):
         b2_x1, b2_y1, b2_x2, b2_y2 = box2[:, 0], box2[:, 1], box2[:, 2], box2[:, 3]
 
     # get the corrdinates of the intersection rectangle
-    inter_rect_x1 = torch.max(b1_x1, b2_x1)
-    inter_rect_y1 = torch.max(b1_y1, b2_y1)
-    inter_rect_x2 = torch.min(b1_x2, b2_x2)
-    inter_rect_y2 = torch.min(b1_y2, b2_y2)
+    inter_rect_x1 = torch.max(b1_x1.float(), b2_x1.float())
+    inter_rect_y1 = torch.max(b1_y1.float(), b2_y1.float())
+    inter_rect_x2 = torch.min(b1_x2.float(), b2_x2.float())
+    inter_rect_y2 = torch.min(b1_y2.float(), b2_y2.float())
     # Intersection area
     inter_area = torch.clamp(inter_rect_x2 - inter_rect_x1 + 1, min=0) * torch.clamp(
         inter_rect_y2 - inter_rect_y1 + 1, min=0
