@@ -81,6 +81,7 @@ if __name__ == "__main__":
     )
 
     optimizer = torch.optim.Adam(model.parameters())
+    optimizer = FP16_Optimizer(optimizer, dynamic_loss_scale=True)
     model, optimizer = amp.initialize(model, optimizer, opt_level="O1")
 
     metrics = [
