@@ -24,7 +24,6 @@ import torch.optim as optim
 
 import apex
 from apex import amp
-from apex.fp16_utils import *
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -82,8 +81,7 @@ if __name__ == "__main__":
     )
 
     optimizer = torch.optim.Adam(model.parameters())
-    optimizer = FP16_Optimizer(optimizer, dynamic_loss_scale=True)
-    model, optimizer = amp.initialize(model, optimizer, opt_level="O1")
+    model, optimizer = amp.initialize(model, optimizer, opt_level="O2")
 
     metrics = [
         "grid_size",
