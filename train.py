@@ -24,7 +24,7 @@ import torch.optim as optim
 
 import apex
 from apex import amp
-from apex import fp16_utils
+from apex.fp16_utils import *
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
