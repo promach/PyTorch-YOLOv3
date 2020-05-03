@@ -19,6 +19,8 @@ from torchvision import transforms
 from torch.autograd import Variable
 import torch.optim as optim
 
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
 def evaluate(model, path, iou_thres, conf_thres, nms_thres, img_size, batch_size):
     model.eval()
