@@ -54,7 +54,7 @@ class Adder2dFunction(Function):
         else:
             X_ = X
 
-        unoptimized_cuda.UNOPTIMIZED_CONV(X_, W, out, [stride,])
+        unoptimized_cuda.UNOPTIMIZED_CONV(X_.float(), W.float(), out, [stride,])
 
         out = out.permute(0, 3, 1, 2).contiguous()
 
