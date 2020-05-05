@@ -58,7 +58,7 @@ class Adder2dFunction(Function):
 
         out = out.permute(0, 3, 1, 2).contiguous()
 
-        ctx.save_for_backward(X, W, torch.tensor(stride), torch.tensor(padding))
+        ctx.save_for_backward(X.float(), W.float(), torch.tensor(stride), torch.tensor(padding))
         
         return out
 
