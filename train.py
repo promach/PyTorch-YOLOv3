@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
             loss, outputs = model(imgs, targets)
 
-            with amp.scale_loss(loss, optimizer) as scaled_loss:
+            with amp.scale_loss(loss.float(), optimizer) as scaled_loss:
                 scaled_loss.backward()
 
             if batches_done % opt.gradient_accumulations:
