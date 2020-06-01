@@ -6,6 +6,8 @@ build
 dist
 output
 data/coco
+data/custom
+data/VOCdevkit
 backup
 weights/*.weights
 __pycache__
